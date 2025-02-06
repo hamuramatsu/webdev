@@ -11,7 +11,7 @@
 <body>
     <div id="holder">
         <div id="info">
-            <h1>Everything is Awesome</h1>
+            <h1 id="greeting">Everything is</h1>
             <div id="time">
                 <p>The time is currently XX:YYam -- Good Day!</p>
                 <p>Yor lucky numbers are 1, 2, and 3</p>
@@ -19,28 +19,44 @@
         </div>
 
         <div id="figure">
-            <!-- <img id="head" src="images/heads/head1.png" alt="head">
+            <img id="head" src="images/heads/head1.png" alt="head">
             <img id="body" src="images/bodies/body1.png" alt="body">
         </div>
-    </div> -->
+    </div>
 </body>
 <script>
     // randomize head and body images
     // create random int between 1 and 6
     let headNum = parseInt(Math.random() * 6 + 1);
     let bodyNum = parseInt(Math.random() * 6 + 1);
+
+    document.getElementById("head").src=`images/heads/head${headNum}.png`;
+    document.getElementById("body").src=`images/bodies/body${bodyNum}.png`;
+
+    function getNum() {
+        let userInput = ("Please enter a positive number greater than or equal to 3:");
+
+        while (isNaN(userInput) || userInput < 3) {
+            if (isNaN(userInput)) {
+                alert("That is not a number. Please try again.");
+            } else if (userInput < 3) {
+                alert("The number must be greater than or equal to 3. Please try again.");
+            }
+            userInput = prompt("Please enter a positive number greater than or equal to 3:");
+         }
+
+         return Number(userInput);
+    }
+
+    // call function to get valid number
+    // getNum();
     
-    document.write(`<img id="head" src="images/heads/head${headNum}.png">`)
-    document.write(`<img id="body" src="images/bodies/body${bodyNum}.png">`)
-    document.write("</div>");
-    document.write("</div>");
-
-    // document.getElementById("head").src=`images/heads/head${headNum}.png">`;
-    // document.getElementById("body").src=`images/bodies/body${bodyNum}.png">`;
-
-    const enteredNum = prompt("Please enter a number greater than 3")
-
-    if (enteredNum)
+    // array of possible words
+    const words = ['Awesome', 'Fantastic', 'Fabulous', 'Superb', 'Perfect', 'Brilliant', 'Coming up Roses'];
+    // randomly select a word
+    let randomWord = words[Math.floor(Math.random() * words.length)];
+    // update heading with random word
+    document.getElementById("greeting").innerText += ` ${randomWord}`;
 
 </script>
 
