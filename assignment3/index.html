@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Macro #3</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+
+            #container {
+                display: flex; 
+                align-items: flex-start;
+            }
+
+            #scene {
+                width: 65%;
+                margin-right: 30px;
+                border: 1px solid black;
+                position: relative;
+            }
+            
+            #background {
+                display: block;
+            }
+
+            #grasses {
+                position: absolute;
+                width: 100%;
+                display: flex;
+                bottom: 0px;
+            }
+
+            .grass {
+                width: calc(100%/3);
+            }
+
+            #info {
+                width: 35%;
+                border: 1px solid black;
+            }
+
+            #background {
+                width: 100%;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <div id="scene">
+                <img id="background" src="images/environment_forestbackground.png">
+                <div id="grasses">
+                    <img class="grass" id="grass1" src="images/grass.png" alt="grass1">
+                    <img class="grass" id="grass2" src="images/grass.png" alt="grass2">
+                    <img class="grass" id="grass3" src="images/grass.png" alt="grass3">
+                </div>
+
+            </div>
+            
+            <div id="info">
+                <h1>Gotta Catch 'Em All!</h1>
+                <p>Your goal in this game is to earn as many Pokeballs as possible while catching a variety of Pokemon along the way.</p>
+                <!-- <p>To play, simply click on one of the three grass clumps in the forest. Behind one of those grass clumps is a Pokemon that can be caught. Behind another grass clump are two free Pokeballs that you can use to try again, and behind the last grass clump is nothing.</p> -->
+                <!-- <p>Note that each time you pick a grass clump you will be using one of your Pokeballs, and when you run out the game is over!</p> -->
+                <h2 id="progress">Your progress so far...</h2>
+                <p>Pokeballs left: <span id="pokeballs_left">5</span></p>
+                <p>Pokemon caught: <span id="pokemon_caught">0</span></p>
+                <button id="play_again">Play again</button>
+
+            </div>
+        </div>
+
+
+
+
+        
+        <script>
+            // DOM queries
+            const grass1 = document.getElementById('grass1');            
+            const grass2 = document.getElementById('grass2');            
+            const grass3 = document.getElementById('grass3');
+            const progress = document.getElementById('progress');
+            const pokeballs_left = document.getElementById('pokeballs_left');
+            const pokemon_caught = document.getElementById('pokemon_caught');
+            const play_again = document.getElementById('play_again');
+
+            // possible pokemon
+            // JavaScript array of objects 
+            const pokemon = [
+                {name:'Pikachu', image:'images/pikachu.png'}, 
+                {name:'Bulbasaur', image:'images/bulbasaur.png'},
+                {name:'Charmander', image:'images/charmander.png'},
+                {name:'Eevee', image:'images/eevee.png'},
+                {name:'Squirtle', image:'images/squirtle.png'}
+            ];
+
+
+            //create some global variables
+            let pokeballsLeftCounter = 5;
+            let pokemonCaughtCounter = 0; //do math w int. then change to string
+
+
+            grass1.onclick = function() {
+                // decrease the pokeballs left
+                pokeballsLeftCounter -= 1;
+
+                // generate random  new source
+                let chance = parseInt(Math.random() * 3);
+                console.log(chance);
+                // 1. more pokeballs
+                if (chance == 0 ) {
+                    grass1.src = "images/pokeballs.png";
+                    progress.innerText = "You found 2 pokeballs";
+                    pokeballsLeftCounter += 2;
+                     //update inner text count
+                }
+                // 2. pokemon
+                if (chance == 1) {
+                    let foundPokemon = pokemon[parseInt(Math.random() * pokemon.length)];
+                    grass1.src = foundPokemon.image;
+                    progress.innerText = `You found a ${foundPokemon.name}`;
+                    pokemonCaughtCounter += 1;
+                    //update inner text count
+                }
+                    // update pokemon caught
+                // 3. nothing
+            }
+
+        </script>
+        
+    </body>
+</html>

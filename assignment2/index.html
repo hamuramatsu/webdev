@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment #2</title>
+    <meta name="description" content="">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="holder">
+        <div id="info">
+            <h1>Everything is Awesome</h1>
+            <div id="time">
+                <p>The time is currently XX:YYam -- Good Day!</p>
+                <p>Yor lucky numbers are 1, 2, and 3</p>
+            </div>
+        </div>
+
+        <div id="figure">
+            <!-- <img id="head" src="images/heads/head1.png" alt="head">
+            <img id="body" src="images/bodies/body1.png" alt="body">
+        </div>
+    </div> -->
+</body>
+<script>
+    // randomize head and body images
+    // create random int between 1 and 6
+    let headNum = parseInt(Math.random() * 6 + 1);
+    let bodyNum = parseInt(Math.random() * 6 + 1);
+    
+    document.write(`<img id="head" src="images/heads/head${headNum}.png">`)
+    document.write(`<img id="body" src="images/bodies/body${bodyNum}.png">`)
+    document.write("</div>");
+    document.write("</div>");
+
+    // document.getElementById("head").src=`images/heads/head${headNum}.png">`;
+    // document.getElementById("body").src=`images/bodies/body${bodyNum}.png">`;
+
+    const enteredNum = prompt("Please enter a number greater than 3")
+
+    if (enteredNum)
+
+</script>
+
+</html>
