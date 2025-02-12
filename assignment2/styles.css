@@ -8,7 +8,7 @@ html, body {
     width: 100vw;
     height: 100vh;
 
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 #holder {
@@ -30,16 +30,6 @@ html, body {
     left: 5%;
 }
 
-#figure {
-    position: absolute;
-    bottom: 0px;
-    right: 20%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    /* border: 4px solid blu; */
-}
 
 h1 {
     color: white;
@@ -50,20 +40,23 @@ h1 {
 
 }
 
-#time {
+#infoBox {
     background-color: rgba(256, 256, 256, .5);
     padding: 20px;
     border-radius: 20px;
     width: fit-content;
     margin-top: 2em;
-
 }
 
-/* #head {
-    border: 5px solid red;
-
+#infoBox p {
+    padding: 0.5em;
 }
 
-#body {
-    border: 5px solid red;
-} */
+#figure {
+    position: absolute;
+    bottom: 0px;
+    right: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

@@ -12,10 +12,12 @@
     <div id="holder">
         <div id="info">
             <h1 id="greeting">Everything is</h1>
-            <div id="time">
-                <p>The time is currently XX:YYam -- Good Day!</p>
-                <p>Yor lucky numbers are 1, 2, and 3</p>
+            <div id="infoBox">
+                <p id="timeMessage">The time is currently XX:YYam -- Good Day!</p>
+                <p id="luckyNum">Your lucky numbers are 1, 2, and 3</p>
             </div>
+            <!-- <div id="luckyNum">
+            </div> -->
         </div>
 
         <div id="figure">
@@ -25,38 +27,131 @@
     </div>
 </body>
 <script>
+
     // randomize head and body images
     // create random int between 1 and 6
-    let headNum = parseInt(Math.random() * 6 + 1);
-    let bodyNum = parseInt(Math.random() * 6 + 1);
+    function getRandomNum() {
+        let randomNum = parseInt(Math.random() * 6 + 1);
+        return randomNum;
+    }
+    let headNum = getRandomNum();
+    let bodyNum = getRandomNum();
 
     document.getElementById("head").src=`images/heads/head${headNum}.png`;
     document.getElementById("body").src=`images/bodies/body${bodyNum}.png`;
 
+
+    // get user to supply positive number
     function getNum() {
-        let userInput = ("Please enter a positive number greater than or equal to 3:");
+        let userInput;
 
-        while (isNaN(userInput) || userInput < 3) {
-            if (isNaN(userInput)) {
-                alert("That is not a number. Please try again.");
-            } else if (userInput < 3) {
-                alert("The number must be greater than or equal to 3. Please try again.");
-            }
+         while (true) {
             userInput = prompt("Please enter a positive number greater than or equal to 3:");
-         }
+            
+            if (!isNaN(userInput) && Number(userInput) >= 3) {
+                return Number(userInput);
+            }
+            alert("The number must be greater than or equal to 3. Please try again.");
+        }
+    }
+    
+    // randomize the page greeting
+    function getRandomWord() {
+        // array of possible words
+        const words = ['Awesome', 'Fantastic', 'Fabulous', 'Superb', 'Perfect', 'Brilliant', 'Coming up Roses'];
+        // randomly select a word
+        let randomWord = words[Math.floor(Math.random() * words.length)];
 
-         return Number(userInput);
+        return randomWord;        
+    }
+    // update heading with random word
+    document.getElementById("greeting").textContent += ` ${getRandomWord()}`;
+
+
+    // get current time of day and inform user
+    function getCurrentTime() {
+        const now = new Date();
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        const isAM = hours < 12;
+
+        // turn into 12 hour format
+        hours = hours % 12 || 12;
+        let formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+        const period = isAM ?  "am" : "pm";
+
+        return `${hours}:${formattedMinutes}${period}`;
     }
 
-    // call function to get valid number
-    // getNum();
-    
-    // array of possible words
-    const words = ['Awesome', 'Fantastic', 'Fabulous', 'Superb', 'Perfect', 'Brilliant', 'Coming up Roses'];
-    // randomly select a word
-    let randomWord = words[Math.floor(Math.random() * words.length)];
-    // update heading with random word
-    document.getElementById("greeting").innerText += ` ${randomWord}`;
+    // get greeting based on time of day
+    function getGreeting() {
+        const now = new Date();
+        const hours = now.getHours();
+
+        if (hours >= 0 && hours < 6) {
+            return "Good Night!";
+        } else if (hours >= 6 && hours < 12) {
+            return "Good Morning!";
+        } else if (hours >= 12 && hours < 18) {
+            return "Good Afternoon!";
+        } else {
+            return "Good Evening!";
+        }
+    }
+
+    // display current time and greeting
+    let currentTime = getCurrentTime();
+    let currentGreeting = getGreeting();
+    document.getElementById("timeMessage").textContent = `The time is currently ${currentTime} -- ${currentGreeting}`;
+
+
+    // get background based on time of day
+    function getBackground() {
+        const now = new Date();
+        const hours = now.getHours();
+        let backgroundImage = '';
+
+        if (hours >= 0 && hours < 6) {
+            backgroundImage = "images/backgrounds/morning.png";
+        } else if (hours >= 6 && hours < 12) {
+            backgroundImage = "images/backgrounds/afternoon.png";
+        } else if (hours >= 12 && hours < 18) {
+            backgroundImage = "images/backgrounds/evening.png";
+        } else {
+            backgroundImage = "images/backgrounds/night.png";
+        }
+
+        return backgroundImage;
+    }
+
+    // update background
+    const holder = document.getElementById('holder');
+    holder.style.backgroundImage = `url(${getBackground()})`;
+
+
+    // generate lucky numbers
+    function getLuckyNum(max) {
+        const luckyNumbers = new Set();
+
+        for (let i=0; i<3; i++) {
+            const randomNum = Math.floor(Math.random() * max) + 1;
+            luckyNumbers.add(randomNum)
+        }
+
+        return Array.from(luckyNumbers);
+    }
+
+    function formatLuckyNum(numbers) {
+        return `${numbers[0]}, ${numbers[1]}, and ${numbers[2]}`;
+    }
+
+    const userNum = getNum();
+    const luckyNumbers = getLuckyNum(userNum);
+    const formattedLuckyNumbers = formatLuckyNum(luckyNumbers);
+
+    const luckyNumText = document.getElementById("luckyNum")
+    luckyNumText.textContent = `Your three lucky numbers today are ${formattedLuckyNumbers}`;
+
 
 </script>
 
