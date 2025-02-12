@@ -40,7 +40,7 @@ h1 {
 
 }
 
-#infoBox {
+#messages {
     background-color: rgba(256, 256, 256, .5);
     padding: 20px;
     border-radius: 20px;
@@ -48,7 +48,7 @@ h1 {
     margin-top: 2em;
 }
 
-#infoBox p {
+#messages p {
     padding: 0.5em;
 }
 
