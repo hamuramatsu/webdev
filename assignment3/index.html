@@ -62,18 +62,17 @@
             <div id="info">
                 <h1>Gotta Catch 'Em All!</h1>
                 <p>Your goal in this game is to earn as many Pokeballs as possible while catching a variety of Pokemon along the way.</p>
-                <!-- <p>To play, simply click on one of the three grass clumps in the forest. Behind one of those grass clumps is a Pokemon that can be caught. Behind another grass clump are two free Pokeballs that you can use to try again, and behind the last grass clump is nothing.</p> -->
-                <!-- <p>Note that each time you pick a grass clump you will be using one of your Pokeballs, and when you run out the game is over!</p> -->
                 <h2 id="progress">Your progress so far...</h2>
-                <p>Pokeballs left: <span id="pokeballs_left">5</span></p>
-                <p>Pokemon caught: <span id="pokemon_caught">0</span></p>
-                <button id="play_again">Play again</button>
+                <p>Pokeballs left: <span id="pokeballsLeft">5</span></p>
+                <p>Pokemon caught: <span id="pokemonCaught">0</span></p>
+                <button id="playAgain">Play again</button>
+                <p id="gameOver"></p>
+            </div>
+
+            <div id="results">
 
             </div>
         </div>
-
-
-
 
         
         <script>
@@ -82,9 +81,10 @@
             const grass2 = document.getElementById('grass2');            
             const grass3 = document.getElementById('grass3');
             const progress = document.getElementById('progress');
-            const pokeballs_left = document.getElementById('pokeballs_left');
-            const pokemon_caught = document.getElementById('pokemon_caught');
-            const play_again = document.getElementById('play_again');
+            const pokeballsLeft = document.getElementById('pokeballsLeft');
+            const pokemonCaught = document.getElementById('pokemonCaught');
+            const playAgain = document.getElementById('playAgain');
+            const gameOver = document.getElementById("gameOver");
 
             // possible pokemon
             // JavaScript array of objects 
@@ -100,33 +100,76 @@
             //create some global variables
             let pokeballsLeftCounter = 5;
             let pokemonCaughtCounter = 0; //do math w int. then change to string
+            let gameStateOn = true;
 
+            function oneRound(grassNum) {
+                // don't run the function if game state is paused
+                if (!gameStateOn) return;
 
-            grass1.onclick = function() {
                 // decrease the pokeballs left
                 pokeballsLeftCounter -= 1;
-
+                //update pokeball count
+                pokeballsLeft.innerText = `${pokeballsLeftCounter}`;
+                
                 // generate random  new source
                 let chance = parseInt(Math.random() * 3);
                 console.log(chance);
                 // 1. more pokeballs
                 if (chance == 0 ) {
-                    grass1.src = "images/pokeballs.png";
+                    grassNum.src = "images/pokeballs.png";
                     progress.innerText = "You found 2 pokeballs";
                     pokeballsLeftCounter += 2;
-                     //update inner text count
+                    //update pokeball count
+                    pokeballsLeft.innerText = `${pokeballsLeftCounter}`;
                 }
                 // 2. pokemon
                 if (chance == 1) {
                     let foundPokemon = pokemon[parseInt(Math.random() * pokemon.length)];
-                    grass1.src = foundPokemon.image;
+                    grassNum.src = foundPokemon.image;
                     progress.innerText = `You found a ${foundPokemon.name}`;
                     pokemonCaughtCounter += 1;
-                    //update inner text count
-                }
                     // update pokemon caught
+                    pokemonCaught.innerText = `${pokemonCaughtCounter}`;
+                }
                 // 3. nothing
+                if (chance == 2) {
+                    grassNum.style.visibility = "hidden";
+                    progress.innerText = `Nothing here!`;
+                }
+
+                // pause game state
+                gameStateOn = false;
+                
+                // check if use is out of pokeballs
+                if (pokeballsLeftCounter <= 0) {
+                    gameOver.innerText = "Game over -- you ran out of pokeballs";
+                    console.log("done")
+                } else {
+                    // show playAgain button
+                    playAgain.style.visibility = "visible";
+                }
             }
+
+            // call function on grass click
+            grass1.onclick = () => oneRound(grass1);
+            grass2.onclick = () =>  oneRound(grass2);
+            grass3.onclick = () =>  oneRound(grass3);
+            
+
+            // play again button - reset grass
+            playAgain.onclick = function() {
+                playAgain.style.visibility = "hidden";
+                // return all grass to normal
+                const allGrass = document.querySelectorAll(".grass");
+                for (let i=0; i<allGrass.length; i++) {
+                    allGrass[i].style.visibility = "visible";
+                    allGrass[i].src = "images/grass.png";
+                }
+                // turn game state on again
+                gameStateOn = true;
+            }
+
+            
 
         </script>
         
