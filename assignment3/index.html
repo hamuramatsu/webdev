@@ -8,21 +8,28 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
-
+            body {
+                margin: 2em;
+            }
             #container {
                 display: flex; 
                 align-items: flex-start;
+                flex-flow: row wrap;
+                justify-content: space-between;
+                font-family: Helvetica, Arial;
             }
 
             #scene {
-                width: 65%;
-                margin-right: 30px;
-                border: 1px solid black;
+                width: 50%;
+                margin-right: 1em;
+                margin-bottom: 1em;
                 position: relative;
             }
             
             #background {
                 display: block;
+                width: 100%;
+                border-radius: 1em;
             }
 
             #grasses {
@@ -32,17 +39,118 @@
                 bottom: 0px;
             }
 
+            #grass1:hover {
+                background-color: rgba(255, 181, 33, 0.5);
+            }
+
+            #grass2:hover {
+                background-color: rgba(255, 181, 33, 0.5);
+            }
+
+            #grass3:hover {
+                background-color: rgba(255, 181, 33, 0.5);
+            }
+
             .grass {
                 width: calc(100%/3);
             }
 
             #info {
-                width: 35%;
-                border: 1px solid black;
+                width: 30%;
+                /* border: 1px solid black; */
+                padding: 2em;
+                margin-right: 1em;
+                margin-bottom: 1em;
+                background-color: rgb(62, 91, 18);
+                color: white;
+                border-radius: 1em;
             }
 
-            #background {
-                width: 100%;
+            #info h1{
+                margin: 0em;
+                padding: 0.5rem;
+                padding-left: 1rem;
+                padding-right: 1rem;
+                border-radius: 0.4em;
+                background-color: white;
+                color: rgb(62, 91, 18);
+                text-align: center;
+            }
+
+            #info h2{
+                margin: 0em;
+                padding: 0.5rem;
+                padding-left: 1rem;
+                padding-right: 1rem;
+                border-radius: 0.4em;
+                border: 1px solid white;
+                /* text-align: center; */
+                /* width: fit-content; */
+            }
+
+            #playAgain {
+                visibility: hidden;
+            }
+
+            #results h3 {
+                margin-top: 0em;
+                font-size: 1.5em;
+                background-color:rgb(43, 98, 117);
+                border-radius: 0.5em;
+                padding: 0.5rem;
+                padding-left: 1rem;
+                padding-right: 1rem;
+                color: white;
+                text-align: center;
+            }
+            #results button {
+                display: flex;
+                margin-bottom: 0.5em;
+            }
+
+            #pokedex {
+                text-align: left;
+            }
+            #pokedex h4 {
+                margin-top: 0em;
+                font-size: 1.5em;
+                margin-bottom: 0.5em;
+                background-color:rgb(43, 98, 117);
+                border-radius: 0.5em;
+                padding: 0.5rem;
+                padding-left: 1rem;
+                padding-right: 1rem;
+                color: white;
+                text-align: center;
+            }
+            #name {
+                width: 110px;
+            }
+            #count {
+                width: 70px;
+            }
+            #histogram {
+                width: 110px;
+            }
+            #pikachuHistogram {
+                background-color: rgb(243, 218, 31);
+                width: 0;
+            }
+            #bulbasaurHistogram {
+                background-color: green;
+                width: 0;
+            }
+            #charmanderHistogram {
+                background-color: orange;
+                width: 0;
+            }
+            #eeveeHistogram {
+                background-color: rgb(122, 76, 36);
+                width: 0;
+            }
+            #squirtleHistogram {
+                background-color: lightblue;
+                width: 0;
             }
 
         </style>
@@ -62,6 +170,7 @@
             <div id="info">
                 <h1>Gotta Catch 'Em All!</h1>
                 <p>Your goal in this game is to earn as many Pokeballs as possible while catching a variety of Pokemon along the way.</p>
+                <br>
                 <h2 id="progress">Your progress so far...</h2>
                 <p>Pokeballs left: <span id="pokeballsLeft">5</span></p>
                 <p>Pokemon caught: <span id="pokemonCaught">0</span></p>
@@ -70,8 +179,49 @@
             </div>
 
             <div id="results">
-
+                <h3>Game History</h3>
+                <ul id="resultHistory"></ul>
+                <button id="clearHistory">Clear History</button>
+                <button id="startOver">Start Over</button>
             </div>
+
+            <div id="pokedex">
+                <h4>Pokedex</h4>
+                <table>
+                    <tr>
+                        <th id="name">Pokemon</th>
+                        <th id="count">Count</th>
+                        <th id="histogram">Histogram</th>
+                    </tr>
+                    <tr id="pikachuRow">
+                        <td>Pikachu</td>
+                        <td id="pikachuCount">0</td>
+                        <td><div id="pikachuHistogram">&nbsp;</div></td>
+                    </tr>
+                    <tr>
+                        <td>Bulbasaur</td>
+                        <td id="bulbasaurCount">0</td>
+                        <td><div id="bulbasaurHistogram">&nbsp;</div></td>
+                    </tr>
+                    <tr>
+                        <td>Charmander</td>
+                        <td id="charmanderCount">0</td>
+                        <td><div id="charmanderHistogram">&nbsp;</div></td>
+                    </tr>
+                    <tr>
+                        <td>Eevee</td>
+                        <td id="eeveeCount">0</td>
+                        <td><div id="eeveeHistogram">&nbsp;</div></td>
+                    </tr>
+                    <tr>
+                        <td>Squirtle</td>
+                        <td id="squirtleCount">0</td>
+                        <td><div id="squirtleHistogram">&nbsp;</div></td>
+                    </tr>
+                </table>
+                <p id="specialMessage"></p>
+            </div>
+
         </div>
 
         
@@ -85,6 +235,9 @@
             const pokemonCaught = document.getElementById('pokemonCaught');
             const playAgain = document.getElementById('playAgain');
             const gameOver = document.getElementById("gameOver");
+            const resultHistoryList = document.getElementById("resultHistory");
+            const clearHistoryBtn = document.getElementById("clearHistory");
+            const startOverBtn = document.getElementById("startOver");
 
             // possible pokemon
             // JavaScript array of objects 
@@ -96,11 +249,11 @@
                 {name:'Squirtle', image:'images/squirtle.png'}
             ];
 
-
             //create some global variables
             let pokeballsLeftCounter = 5;
             let pokemonCaughtCounter = 0; //do math w int. then change to string
             let gameStateOn = true;
+            let resultHistory = [];
 
             function oneRound(grassNum) {
                 // don't run the function if game state is paused
@@ -121,6 +274,8 @@
                     pokeballsLeftCounter += 2;
                     //update pokeball count
                     pokeballsLeft.innerText = `${pokeballsLeftCounter}`;
+                    // add to history
+                    updateHistory("Pokeballs found (+2)");
                 }
                 // 2. pokemon
                 if (chance == 1) {
@@ -130,11 +285,17 @@
                     pokemonCaughtCounter += 1;
                     // update pokemon caught
                     pokemonCaught.innerText = `${pokemonCaughtCounter}`;
+                    // add to history
+                    updateHistory(`${foundPokemon.name} found`);
+                    // update pokedex
+                    updatePokedex(foundPokemon.name);
                 }
                 // 3. nothing
                 if (chance == 2) {
                     grassNum.style.visibility = "hidden";
                     progress.innerText = `Nothing here!`;
+                    // add to history
+                    updateHistory("Nothing found");
                 }
 
                 // pause game state
@@ -143,7 +304,6 @@
                 // check if use is out of pokeballs
                 if (pokeballsLeftCounter <= 0) {
                     gameOver.innerText = "Game over -- you ran out of pokeballs";
-                    console.log("done")
                 } else {
                     // show playAgain button
                     playAgain.style.visibility = "visible";
@@ -169,6 +329,90 @@
                 gameStateOn = true;
             }
 
+
+            // Function to update result history
+            function updateHistory(result) {
+                // add result to start of array - reverse order
+                resultHistory.unshift(result);
+                renderHistory();
+            }
+
+            // add to game history
+            function renderHistory() {
+                 // clear list
+                resultHistoryList.innerHTML = "";
+                // append result
+                resultHistory.forEach((result) => {
+                    let li = document.createElement("li");
+                    li.innerText = result;
+                    resultHistoryList.appendChild(li);
+                });
+            }
+            // clear game history
+            clearHistoryBtn.onclick = function () {
+                // reset history array
+                resultHistory = [];
+                renderHistory();
+            };
+
+            // restart the game
+            startOverBtn.onclick = function () {
+                // reset game state
+                pokeballsLeftCounter = 5;
+                pokemonCaughtCounter = 0;
+                resultHistory = [];
+
+                // update UI
+                pokeballsLeft.innerText = `${pokeballsLeftCounter}`;
+                pokemonCaught.innerText = `${pokemonCaughtCounter}`;
+                progress.innerText = "Game restarted! Click the grass!";
+                // clear history
+                renderHistory();
+
+                // return all grass to normal
+                const allGrass = document.querySelectorAll(".grass");
+                for (let i=0; i<allGrass.length; i++) {
+                    allGrass[i].style.visibility = "visible";
+                    allGrass[i].src = "images/grass.png";
+                }
+
+                // hide "play again" button
+                playAgain.style.visibility = "hidden";
+
+                // clear game over text
+                gameOver.innerText = "";
+
+                // turn game state on again
+                gameStateOn = true;
+            };
+
+
+            // track pokemon caught
+            let pokedex = {
+                Pikachu: 0,
+                Bulbasaur: 0,
+                Charmander: 0,
+                Eevee: 0,
+                Squirtle: 0,
+            };
+
+            // add to pokedex
+            function updatePokedex(pokemonName) {
+                // update count
+                pokedex[pokemonName]++;
+
+                // update count in table
+                document.getElementById(`${pokemonName.toLowerCase()}Count`).innerText = pokedex[pokemonName];
+                
+                // update histogram
+                document.getElementById(`${pokemonName.toLowerCase()}Histogram`).style.width = `${pokedex[pokemonName] * 20}px`;
+
+                // display message if caught at least one of each pokemon
+                if (Object.values(pokedex).every(count => count > 0)) {
+                    document.getElementById("specialMessage").innerText = "Congratulations! You've caught at least one of each Pokémon!";
+                }
+            }
+            
             
 
         </script>
