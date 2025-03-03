@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Assignment #5</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+
+        <h1 id="header">Seasonal To-Do List</h1>
+        <select id="filter">
+            <option value="all">Show All Seasons</option>
+            <option value="winter">Winter</option>
+            <option value="spring">Spring</option>
+            <option value="summer">Summer</option>
+            <option value="fall">Fall</option>
+        </select>
+        <img id="button_add" src="images/add_button.png">
+
+
+        <div id="panel_add_new_item" class="panel hidden">
+            <h2>Add New Item</h2>
+            <div id="item_error" class="hidden">Please fill out all form fields!</div>
+            <form>
+                <div>
+                    <label for="item_title">Item title</label><br>
+                    <input type="text" id="item_title">        
+                </div>
+                <div>
+                    <label for="item_category">Category</label><br>
+                    <select id="item_category">
+                        <option value="winter">Winter</option>
+                        <option value="spring">Spring</option>
+                        <option value="summer">Summer</option>
+                        <option value="fall">Fall</option>                       
+                    </select>        
+                </div>
+                <div>
+                    <label for="item_description">Item Description</label><br>
+                    <textarea id="item_description"></textarea>        
+                </div>
+                <div>
+                    <button id="item_add">Add Item</button>
+                    <button id="item_cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="panel_info" class="panel hidden">
+            <h2 id="info_title">TITLE</h2>
+            <p id="info_season">Season: XYZ</p>
+            <hr>
+            <p id="info_created">Created at XYZ</p>
+            <p id="info_accessed">Last accessed at XYZ</p>
+            <button id="info_cancel">Cancel</button>
+        </div>
+        <div id="panel_item_container"></div>
+        <script>
+            // DOM queries
+            const button_add = document.getElementById('button_add');
+            const panel_add_new_item = document.getElementById('panel_add_new_item');
+            const item_cancel = document.getElementById('item_cancel');
+            const item_add = document.getElementById('item_add');
+            const panel_item_container = document.getElementById('panel_item_container');
+            const item_category = document.getElementById('item_category');
+            const item_title = document.getElementById('item_title');
+            const panel_info = document.getElementById('panel_info');
+            const info_cancel = document.getElementById('info_cancel');
+
+            // when add button is clicked, reveal panel_add_new_item
+            button_add.onclick = function(event){
+                panel_add_new_item.classList.remove("hidden");
+            }
+
+            // when item_add is clicked
+            item_add.onclick = function(event){
+                // 1. prevent form defaults 
+                event.preventDefault();
+
+                // 2. add a sticky to the panel_item_container
+                let item = document.createElement("div");
+                item.classList.add("tile"); // create the tile
+                item.classList.add(item_category.value) // add season class name
+                item.innerText = item_title.value // adds title to the item
+                
+                // 3. make delete button for each item
+                let deleteButton = document.createElement('img');   
+                deleteButton.src = "images/delete_button.png";           
+                item.appendChild(deleteButton);
+
+                // 4. add item to panel container
+                panel_item_container.appendChild(item); 
+            
+                // 5. when each item is clicked, show info panel, hide add panel
+                item.onclick = function(event) {
+                    panel_add_new_item.classList.add('hidden');
+                    panel_info.classList.remove('hidden');
+                }
+
+                // 6. close add panel 
+                panel_add_new_item.classList.add('hidden');
+
+            }
+
+            // Cancel add item 
+            item_cancel.onclick = function(event) {
+                event.preventDefault(); // prevents form from being submitted on button press
+                panel_add_new_item.classList.add('hidden');
+            }
+
+            // Close info panel  
+            info_cancel.onclick = function(event) {
+                panel_info.classList.add('hidden');
+            }
+    
+
+    
+        </script>
+    </body>
+</html>

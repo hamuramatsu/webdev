@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Design Your own Hogwarts!</title>
+    <style type="text/css">
+        body {
+          font-family: Helvetica, sans-serif;
+        }
+
+        h1 {
+          text-align: center;
+          margin-bottom: 1em;
+          margin-top: 1em;
+          text-transform: uppercase;
+        }
+
+        hr {
+          border: 1px dashed gray;
+        }
+
+        #container {
+          display: flex;
+          align-items: flex-start;
+          gap: 20px;
+          justify-content: center;
+        }
+
+        #userMap {
+          width: 320px;
+          height: 320px;
+          border: 3px dotted gray;
+          display: grid;
+          grid-template-columns: repeat(10, 32px);
+          grid-auto-rows: 32px;
+          flex-shrink: 0;
+        }
+
+        .block {
+          width: 32px;
+          height: 32px;
+        }
+
+        .block:hover {
+          outline: 3px solid rgb(110, 170, 242);
+        }
+
+        #rightColumn {
+          width: 60%;
+          display: block;
+        }
+
+        #rightColumn h2 {
+          margin-top: 0px;
+          font-size: 16px;
+          font-weight: normal;
+        }
+
+        #tileMenu {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 3px;
+          margin-top: 1em;
+        }
+
+        .tileOption {
+          width: 32px;
+          height: 32px;
+        }
+
+        .selected {
+          outline: 3px solid rgb(255, 120, 176);
+        }
+
+    </style>
+  </head>
+
+  <body>
+    <h1>Design Your Own Hogwarts!</h1>
+
+    <!-- load in the image array file - this makes available a new array of all image filenames that you can use for this project -->
+    <!-- Assets courtesy of Crawl Stone Soup: https://github.com/crawl/tiles -->
+    <script src="image_array.js"></script>
+
+    <!-- write your code here -->
+    <div id="container">
+      <div id="userMap"></div> 
+      <div id="rightColumn">
+        <h2>Click on a tile here to select it. Then click on the map to the left to place the tile.</h2>
+        <hr>
+        <div id="tileMenu"></div>
+      </div>
+    </div>
+    
+
+    <script>
+      const userMap = document.getElementById("userMap");
+      const tileMenu = document.getElementById("tileMenu");
+      let selectedImg = "";
+
+      for (let i=0; i < 100; i++) {
+        const newBlock = document.createElement("div");
+        newBlock.classList.add("block");
+        userMap.appendChild(newBlock);
+
+        newBlock.addEventListener("click", (event) => {
+          newBlock.style.backgroundImage =  `url(${selectedImg})`
+        });
+      }
+
+      array_library.forEach((imgSrc) => {
+        const tileImg = document.createElement("img");
+        tileImg.src = imgSrc;
+        tileImg.classList.add("tileOption")
+        tileMenu.appendChild(tileImg);
+
+        tileImg.addEventListener("click", (event) => {
+          document.querySelectorAll(".tileOption").forEach(tileImg => tileImg.classList.remove("selected"));
+
+          tileImg.classList.add("selected");
+
+          selectedImg = imgSrc;
+
+        });
+
+      });
+      
+
+
+    </script>
+
+  </body>
+</html>
