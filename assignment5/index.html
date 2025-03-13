@@ -14,6 +14,11 @@
             <option value="summer">Summer</option>
             <option value="fall">Fall</option>
         </select>
+        <select id="completed_filter">
+            <option value="all">Show all</option>
+            <option value="complete">Complete</option>
+            <option value="incomplete">Incomplete</option>
+        </select>
         <img id="button_add" src="images/add_button.png">
 
 
@@ -48,6 +53,7 @@
         <div id="panel_info" class="panel hidden">
             <h2 id="info_title">TITLE</h2>
             <p id="info_season">Season: XYZ</p>
+            <p id="info_description"></p>
             <hr>
             <p id="info_created">Created at XYZ</p>
             <p id="info_accessed">Last accessed at XYZ</p>
@@ -63,54 +69,189 @@
             const panel_item_container = document.getElementById('panel_item_container');
             const item_category = document.getElementById('item_category');
             const item_title = document.getElementById('item_title');
+            const item_description = document.getElementById("item_description");
+            const item_error = document.getElementById('item_error');
+
+
             const panel_info = document.getElementById('panel_info');
+            const info_title = document.getElementById('info_title');
+            const info_season = document.getElementById('info_season');
+            const info_created = document.getElementById('info_created');
+            const info_accessed = document.getElementById('info_accessed');
             const info_cancel = document.getElementById('info_cancel');
+            const info_description = document.getElementById('info_description');
+
+            const filter = document.getElementById('filter');
+            const completed_filter = document.getElementById('completed_filter');
+
+            function formatDate(date) {
+                return new Date(date).toLocaleString('en-US', {
+                    month: '2-digit',
+                    day: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            }
 
             // when add button is clicked, reveal panel_add_new_item
             button_add.onclick = function(event){
                 panel_add_new_item.classList.remove("hidden");
             }
+            item_category.value = "";
 
             // when item_add is clicked
             item_add.onclick = function(event){
                 // 1. prevent form defaults 
                 event.preventDefault();
+                // hide error message again
+                item_error.classList.add("hidden");
+
+                // show error message if form fields not completed
+                if (item_title.value.trim() == "" || item_description.value.trim() == "" || item_category.value.trim() =="") {
+                    item_error.classList.remove("hidden");
+                    console.log("error");
+                    return;
+                };
 
                 // 2. add a sticky to the panel_item_container
-                let item = document.createElement("div");
-                item.classList.add("tile"); // create the tile
-                item.classList.add(item_category.value) // add season class name
-                item.innerText = item_title.value // adds title to the item
+                let sticky = document.createElement("div");
+                sticky.classList.add("tile"); // create the tile
+                sticky.classList.add(item_category.value) // add season class name
+                sticky.innerText = item_title.value // adds title to the item
+                sticky.classList.add("incomplete");
+
+                // set creation date/time for dateCreated and lastAccess
+                let dateCreated = new Date();
                 
+                // store item data in dataset
+                sticky.dataset.title = item_title.value;
+                sticky.dataset.description = item_description.value;
+                sticky.dataset.season = item_category.value;
+                sticky.dataset.created = formatDate(dateCreated);
+                // for first click, set last access equal to creation date
+                let lastAccess = formatDate(dateCreated);
+                sticky.dataset.accessed = lastAccess;
+                sticky.dataset.completed = "false";
+
+
                 // 3. make delete button for each item
                 let deleteButton = document.createElement('img');   
-                deleteButton.src = "images/delete_button.png";           
-                item.appendChild(deleteButton);
+                deleteButton.src = "images/delete_button.png";
+                deleteButton.classList.add("delete");
+                deleteButton.classList.add("hidden");
+                // delete button function
+                sticky.onmouseover = () => deleteButton.classList.remove("hidden");
+                sticky.onmouseout = () => deleteButton.classList.add("hidden");
+                deleteButton.onclick = function(event) {
+                    event.stopPropagation();
+                    sticky.remove();
+                };       
+                sticky.appendChild(deleteButton);
 
-                // 4. add item to panel container
-                panel_item_container.appendChild(item); 
-            
-                // 5. when each item is clicked, show info panel, hide add panel
-                item.onclick = function(event) {
+
+                // create checkmark indicator
+                let sticky_checkmark = document.createElement("img");
+                sticky_checkmark.src = "images/check.png";
+                sticky_checkmark.classList.add("hidden");
+                sticky_checkmark.classList.add("sticky_check");
+                sticky.appendChild(sticky_checkmark);
+
+                // create completion button
+                let completeButton = document.createElement("button");
+                    completeButton.innerText = "Mark as complete";
+                    completeButton.classList.add("complete_btn");
+                    sticky.appendChild(completeButton);
+
+                    completeButton.onclick = function(event) {
+                        event.stopPropagation();
+                        if (sticky.dataset.completed === "true") {
+                            sticky.dataset.completed = "false";
+                            sticky.classList.remove("complete");
+                            sticky.classList.add("incomplete");
+                            sticky_checkmark.classList.add("hidden");
+                            completeButton.innerText = "Mark as complete";
+                        } else {
+                            sticky.dataset.completed = "true";
+                            sticky.classList.add("complete");
+                            sticky.classList.remove("incomplete");
+                            sticky_checkmark.classList.remove("hidden");
+                            completeButton.innerText = "Mark as incomplete";
+                        }
+                    };
+
+                // 4. when each item is clicked, show info panel, hide add panel
+                sticky.onclick = function(event) {
                     panel_add_new_item.classList.add('hidden');
                     panel_info.classList.remove('hidden');
+
+                    // display stored data
+                    info_title.innerHTML = this.dataset.title;
+                    info_description.innerHTML = this.dataset.description;
+                    info_season.innerHTML = "Season: " + this.dataset.season;
+                    info_created.innerHTML = "Created: " + this.dataset.created;
+                    
+                    if (lastAccess) {
+                        info_accessed.innerHTML = "Last accessed: " + lastAccess;
+                        lastAccess = null;
+                    } else {
+                        info_accessed.innerHTML = "Last accessed: " + formatDate(new Date()); // ie the time of the current click - "the very moment the user clicked to display the item"
+                    }
                 }
+
+                
+                 // 5. add item to panel container
+                 panel_item_container.appendChild(sticky); 
 
                 // 6. close add panel 
                 panel_add_new_item.classList.add('hidden');
+                item_category.value = "";
+                item_title.value = "";
+                item_description.value = "";
 
+                // reset filter to "all"
+                filter.value = "all";
+                completed_filter.value = "all";
             }
 
             // Cancel add item 
             item_cancel.onclick = function(event) {
                 event.preventDefault(); // prevents form from being submitted on button press
                 panel_add_new_item.classList.add('hidden');
+                // hide error message again
+                item_error.classList.add("hidden");
+                item_category.value = "";
+                item_title.value = "";
+                item_description.value = "";
+                
             }
 
             // Close info panel  
             info_cancel.onclick = function(event) {
                 panel_info.classList.add('hidden');
             }
+
+
+            // filter based both on season and complete/incomplete
+            function filterChange() {
+                let allTiles = document.getElementsByClassName("tile");
+
+                for (let tile of allTiles) {
+                    let matchesCategory = filter.value === "all" || tile.classList.contains(filter.value);
+                    let matchesCompletion = completed_filter.value === "all" || tile.classList.contains(completed_filter.value);
+
+                    if (matchesCategory && matchesCompletion) {
+                        tile.classList.remove("hidden");
+                    } else {
+                        tile.classList.add("hidden");
+                    }
+                }
+            }
+
+            completed_filter.onchange = filterChange;
+            filter.onchange = filterChange;
+
     
 
     

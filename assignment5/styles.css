@@ -15,11 +15,26 @@ body {
     right: 20px;
 }
 
+#completed_filter {
+    position: fixed;
+    top: 40px;
+    right: 20px;
+}
+
 #button_add {
     position: fixed;
     bottom: 20px;
     right: 20px;
 } 
+
+#button_add:hover {
+    transform: scale(1.2);
+    width: auto;
+    -webkit-transform: scale(1.2);
+    -moz-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    -o-transform: scale(1.2);
+}
 
 .panel { 
     width: 500px;
@@ -49,14 +64,17 @@ body {
 } 
 
 .tile {
-    width: 100px;
-    height: 100px;
+    width: 140px;
+    height: 140px;
     float: left;
     margin-right: 10px;
     position: relative;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    padding: 10px;
 } 
 
-.tile img {  /* delete button on tile */
+.delete {  /* delete button on tile */
     position: absolute;
     top: -10px;
     right: -10px;
@@ -74,3 +92,19 @@ body {
 .fall {
     background-color: orange;
 } 
+
+
+.sticky_check {
+    height: 25px;
+    width: auto;
+    position: absolute;
+    bottom: 2px;
+    right: 5px;
+}
+
+.complete_btn {
+    font-size: 10px;
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+}
