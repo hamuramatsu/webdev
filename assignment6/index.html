@@ -7,6 +7,8 @@
                 background-color: black;
                 color: white;
                 font-family: monospace;
+                text-align: center;
+
             }
             .hidden {
                 display: none;
@@ -15,7 +17,8 @@
                 width: 400px;
                 height: 300px;
                 margin: auto;
-                border: 1px solid white;
+                margin-top: 20px;
+                /* border: 1px solid white; */
             }
             .game_item {
                 width: 100px;
@@ -32,18 +35,28 @@
         <div id="panel_start">
             <h1>Memory Matching Madness!</h1>
             <p>Play a fast-paced game of memory and try and beat your best time</p>
-            <button id="button_start">Start!</button>
+            <!-- <button id="button_start">Start!</button> -->
+            <p>Select a difficulty level:</p>
+            <button class="difficulty" data-rows="3" data-cols="4">Easy (3x4)</button>
+            <button class="difficulty" data-rows="4" data-cols="5">Medium (4x5)</button>
+            <button class="difficulty" data-rows="5" data-cols="6">Hard (5x6)</button>
         </div>
-        <div id="panel_game" class="hidden"> <!-- TODO: add class hidden -->
+        <div id="panel_game" class="hidden">
             <h1>Ready, Set, Match!</h1> 
             <div id="timer"></div> 
             <div id="game_container"></div>
         </div>
-        <div id="panel_gameover" class="hidden"> <!-- TODO: add class hidden -->
+        <div id="panel_gameover" class="hidden">
             <h1>Game Over!</h1>
-            <p id="yourTime">Your Time: X</p> <!-- Placeholder for final time -->
-            <p id="bestTime">Best Time: Y</p> <!-- Placeholder for best time -->
-            <button id="button_playagain">Play Again</button>
+            <p id="yourTime">Your Time: X</p> 
+            <p id="bestTime">Best Time: Y</p>
+            <p id="bestPlayer">Best Player: </p>
+            <div id="newHighScoreForm" class="hidden">
+                <label for="playerName">Enter your name:</label>
+                <input type="text" id="playerName">
+                <button id="saveScore">Save</button>
+            </div>
+            <button id="button_playagain" class="hidden">Play Again</button>
         </div>
 
         <!-- audio elements for correct and wrong sounds -->
@@ -56,6 +69,7 @@
 
 
         <script>
+            // window.localStorage.clear();
             // DOM refs
             const panel_start = document.getElementById('panel_start');
             const button_start = document.getElementById('button_start');
@@ -67,23 +81,44 @@
             const wrong = document.getElementById('wrong'); // wrong sound
             const yourTime = document.getElementById('yourTime');
             const bestTime = document.getElementById('bestTime');
+            const bestPlayer = document.getElementById('bestPlayer');
             const button_playagain = document.getElementById('button_playagain')
-            
+            const newHighScoreForm = document.getElementById('newHighScoreForm');
+            const playerNameInput = document.getElementById('playerName');
+            const saveScoreButton = document.getElementById('saveScore');
 
             
             let timeInterval; // variable for setInterval ID
-            let highScore;
-            if (window.localStorage.getItem("highScore")) {
-                highScore = window.localStorage.getItem("highScore");
-            } else {
-                highScore = 0;
-            }
+            let highScore = localStorage.getItem("highScore") || 0;
+            let bestPlayerName = localStorage.getItem("bestPlayer") || "N/A";
+
             
-            button_start.onclick = function(event) {
-                startGame();
+            // button_start.onclick = startGame;
+
+            // difficulty selection
+            let rows;
+            let cols;
+            document.querySelectorAll('.difficulty').forEach(button => {
+                button.onclick = function() {
+                    rows = parseInt(this.getAttribute("data-rows"));
+                    cols = parseInt(this.getAttribute("data-cols"));
+                    game_container.style.width = `${cols * 100}px`;
+                    game_container.style.height = `${rows * 100}px`;
+                    console.log(game_container.style.width, game_container.style.height)
+                    startGame(rows, cols);
+                };
+            });
+
+            function shuffle(pairs) {
+                for (var i = pairs.length - 1; i >= 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var temp = pairs[i];
+                    pairs[i] = pairs[j];
+                    pairs[j] = temp;
+                }
             }
 
-            function startGame() {
+            function startGame(rows, cols) {
                 let matches = 0;
                 let timeElapsed = 0;
                 game_container.innerHTML = "";
@@ -109,16 +144,16 @@
                 'gengar.png', 'eevee.png', 'bellsprout.png', 'squirtle.png',
                 'seel.png', 'caterpie.png'];
 
-                // begin by picking 6 pairs
+                // pick pairs
+                let totalPairs = (rows * cols) / 2;
                 const pairs = [];
-                for (let i = 0; i < 6; i++) {
+                for (let i = 0; i < totalPairs; i++) {
                     let index = parseInt( Math.random() * assets.length );
                     pairs.push( assets[index] );
                     pairs.push( assets[index] );
                     assets.splice(index, 1); // remove the asset from the list to avoid duplicates
                 }
-                console.log(pairs);
-                // TODO - randomize pairs array so cards are shuffled
+                shuffle(pairs);
 
                 // create game items (images) and add them to the game container
                 for (let i = 0; i < pairs.length; i++) {
@@ -157,27 +192,44 @@
                                 matches += 1;
                                 firstCard.classList.remove('uncovered');
                                 secondCard.classList.remove('uncovered');
-                                // correct.play();
+                                correct.play();
 
                                 // did we find all the matches?
-                                if (matches == 6) {
+                                if (matches == totalPairs) {
                                     // stop timer
                                     clearInterval(timeInterval);
                                     yourTime.innerHTML = "Your Time: " + timeElapsed;
+
                                     // new high score?
                                     if (highScore == 0 || timeElapsed < highScore) {
-                                        highScore = timeElapsed;
-                                        window.localStorage.setItem("highScore", highScore);
-                                        bestTime.innerHTML = "Best Time: " + window.localStorage.getItem("highScore") + " - New High Score!";
+                                        newHighScoreForm.classList.remove("hidden");
+                                        bestTime.innerHTML = "You set a new high score!"
+                                        bestPlayer.innerHTML = "Best Player: ..."
+                                        saveScoreButton.onclick = function() {
+                                            let playerName = playerNameInput.value.trim();
+                                            if (playerName) {
+                                                window.localStorage.setItem("highScore", timeElapsed);
+                                                window.localStorage.setItem("bestPlayer", playerName);
+                                                bestTime.innerHTML = "Best Time: " + timeElapsed + " - New High Score!";
+                                                bestPlayer.innerHTML = "Best Player: " + playerName;
+                                                newHighScoreForm.classList.add("hidden");
+
+                                                button_playagain.classList.remove("hidden")
+                                            }
+                                        }
+                                        
                                     } else {
-                                        bestTime.innerHTML = "Best Time: " + window.localStorage.getItem("highScore");
+                                        bestTime.innerHTML = "Best Time: " + highScore;
+                                        bestPlayer.innerHTML = "Best Player: " + bestPlayerName;
+                                        button_playagain.classList.remove("hidden")
+
                                     }
                                     panel_gameover.classList.remove('hidden');
                                     panel_game.classList.add('hidden');
                                 }
                             }
                             else {
-                                // wrong.play();
+                                wrong.play();
 
                                 // hide the images after a delay 
                                 setTimeout( function() {
@@ -195,7 +247,8 @@
             }
 
             button_playagain.onclick = function() {
-                startGame();
+                startGame(rows, cols);
+                button_playagain.classList.add("hidden");
             }
 
 
